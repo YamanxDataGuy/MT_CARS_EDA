@@ -1,0 +1,160 @@
+---
+title: "MT_CARS_EDA"
+author: "Yaman Dinesh Sharma"
+date: '2022-09-09'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Exploring MTCARS data-set
+
+# Yaman Dinesh Sharma
+# We will be demonstrating basic data manipulation, handling data, filtering and creating sub-setting data.
+# we will be using dplyr, ggplot for this data exploration.
+
+```
+
+
+```{r}
+
+library(tidyverse)
+
+
+data <- read.csv("~/Desktop/Data_Analytics/R/DATA_SETS/mtcars.csv")
+View(data)
+```
+
+
+```{r}
+
+# Getting to know the basic structure of our data-set
+names(data)
+head(data,10)
+tail(data)
+str(data)
+?mtcars
+nrow(data)
+ncol(data)
+```
+```{r}
+# Renaming the column name for car models
+rename(data,Car_Models= X)
+```
+
+
+```{r}
+
+# Summarising the whole data-set using summary
+summary(data)
+
+```
+
+```{r}
+
+# Basic Data Manipulation with dplyr 
+
+# arranging data in increasing order
+data <- arrange(data,disp)
+data
+```
+
+```{r}
+# adding new variable using mutate
+data <- mutate(data,disp_perf = disp/100,weight=wt*1000,mil_perf=mpg/10)
+data
+
+v<-var(data$mpg)
+v
+data_vmpg <- mutate(data,var_mpg = (v-mpg)/100)
+data_vmpg
+```
+
+```{r}
+# Sub-setting Data using Filter Function
+
+# Heavy Engine Cars with Cylinder greater than or equal to 6
+data_c <- filter(data,cyl>=6)
+data_c
+
+```
+
+
+```{r}
+# Heavy Vehicles
+data_w <- filter(data,wt>3.5)
+data_w
+```
+
+```{r}
+# High End Cars
+data_h <- filter(data, mil_perf>= 0.25)
+data_h
+
+```
+
+```{r}
+# Low End Cars
+data_l <- filter(data,data$mil_perf <= 0.5 && data$disp_perf > 0.5)
+data_l
+```
+
+```{r}
+# High consumption engines
+data_hce <- filter(data,hp>150, disp>100,mpg<15)
+data_hce
+```
+
+```{r}
+# Fastest cars
+data_f <- filter(data,qsec<17)
+data_f
+data_f <- arrange(data_f,qsec)
+data_f
+```
+
+```{r}
+# Visualizing our data-set using ggplot
+
+# classifying on the basis of number of cylinders
+ggplot(data = mtcars,
+       mapping = aes(x=cyl,y=disp,color ="steel-blue"))+
+  geom_point()
+
+```
+
+
+```{r}
+# Creating a histogram for the count of MPG 
+ggplot(data = mtcars,
+       aes(x=mpg)) +
+  geom_histogram(binwidth = 3,fill="pink",color = "purple")
+```
+
+
+```{r}
+# creating a weight vs cylinders
+ggplot(data=mtcars,
+       mapping = aes(x=cyl,y=wt))+
+  geom_point()
+```
+
+
+```{r}
+# Density plot for weight vs displacement
+ggplot(data=mtcars,
+       mapping = aes(x=wt,y=disp),color ="blue")+
+  geom_point()+
+  stat_density2d(aes(colour=..level..))
+```
+
+```{r}
+# plotting box-plot to show how engine size heavily decides the fuel consumption
+ggplot(data = mtcars,
+       mapping = aes(x=factor(vs),y=mpg))+
+  geom_boxplot(width = 0.7)
+```
+
